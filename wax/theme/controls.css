@@ -106,7 +106,6 @@ a.wax-fullscreen {
   top:10px;
   max-width:300px;
   max-height:560px;
-  opacity:.9;
   -webkit-transition:opacity 150ms;
   -moz-transition:opacity 150ms;
   }

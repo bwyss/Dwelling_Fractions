@@ -1,0 +1,5 @@
+#!/bin/sh
+echo "Enter filename: "
+read filetowork
+sed -i 's/KH/K/g' $filetowork
+sed -i 's/GG/G/g' $filetowork
