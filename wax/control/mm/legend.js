@@ -1,33 +1,55 @@
 wax = wax || {};
 wax.mm = wax.mm || {};
 
-// Legend Control
-// --------------
-// The Modest Maps version of this control is a very, very
-// light wrapper around the `/lib` code for legends.
-wax.mm.legend = function(map, tilejson) {
-    tilejson = tilejson || {};
-    var l, // parent legend
-        legend = {};
+wax.mm.legend = function() {
+    var map,
+        l = {};
 
-    legend.add = function() {
-        l = wax.legend()
-            .content(tilejson.legend || '');
-        return this;
+    var container = document.createElement('div');
+    container.className = 'wax-legends map-legends';
+
+    var element = container.appendChild(document.createElement('div'));
+    element.className = 'wax-legend map-legend';
+    element.style.display = 'none';
+
+    l.content = function(x) {
+        if (!arguments.length) return element.innerHTML;
+
+        element.innerHTML = wax.u.sanitize(x);
+        element.style.display = 'block';
+        if (element.innerHTML === '') {
+            element.style.display = 'none';
+        }
+        return l;
     };
 
-    legend.content = function(x) {
-        if (x) l.content(x.legend || '');
+    l.element = function() {
+        return container;
     };
 
-    legend.element = function() {
-        return l.element();
+    l.map = function(x) {
+        if (!arguments.length) return map;
+        map = x;
+        return l;
     };
 
-    legend.appendTo = function(elem) {
-        wax.u.$(elem).appendChild(l.element());
-        return this;
+    l.add = function() {
+        if (!map) return false;
+        l.appendTo(map.parent);
+        return l;
     };
 
-    return legend.add();
+    l.remove = function() {
+        if (container.parentNode) {
+            container.parentNode.removeChild(container);
+        }
+        return l;
+    };
+
+    l.appendTo = function(elem) {
+        wax.u.$(elem).appendChild(container);
+        return l;
+    };
+
+    return l;
 };

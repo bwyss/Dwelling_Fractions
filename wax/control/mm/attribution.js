@@ -1,29 +1,45 @@
 wax = wax || {};
 wax.mm = wax.mm || {};
 
-// Attribution
-// -----------
-// Attribution wrapper for Modest Maps.
-wax.mm.attribution = function(map, tilejson) {
-    tilejson = tilejson || {};
-    var a, // internal attribution control
-        attribution = {};
+wax.mm.attribution = function() {
+    var map,
+        a = {},
+        container = document.createElement('div');
 
-    attribution.element = function() {
-        return a.element();
+    container.className = 'map-attribution map-mm';
+
+    a.content = function(x) {
+        if (typeof x === 'undefined') return container.innerHTML;
+        container.innerHTML = wax.u.sanitize(x);
+        return a;
     };
 
-    attribution.appendTo = function(elem) {
-        wax.u.$(elem).appendChild(a.element());
-        return this;
+    a.element = function() {
+        return container;
     };
 
-    attribution.init = function() {
-        a = wax.attribution();
-        a.content(tilejson.attribution);
-        a.element().className = 'wax-attribution wax-mm';
-        return this;
+    a.map = function(x) {
+        if (!arguments.length) return map;
+        map = x;
+        return a;
     };
 
-    return attribution.init();
+    a.add = function() {
+        if (!map) return false;
+        map.parent.appendChild(container);
+        return a;
+    };
+
+    a.remove = function() {
+        if (!map) return false;
+        if (container.parentNode) container.parentNode.removeChild(container);
+        return a;
+    };
+
+    a.appendTo = function(elem) {
+        wax.u.$(elem).appendChild(container);
+        return a;
+    };
+
+    return a;
 };

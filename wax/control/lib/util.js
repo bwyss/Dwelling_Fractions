@@ -27,10 +27,11 @@ wax.u = {
                 el.style.msTransform;
 
             if (style) {
-                if (match = style.match(/translate\((.+)px, (.+)px\)/)) {
+                var match;
+                if (match = style.match(/translate\((.+)[px]?, (.+)[px]?\)/)) {
                     top += parseInt(match[2], 10);
                     left += parseInt(match[1], 10);
-                } else if (match = style.match(/translate3d\((.+)px, (.+)px, (.+)px\)/)) {
+                } else if (match = style.match(/translate3d\((.+)[px]?, (.+)[px]?, (.+)[px]?\)/)) {
                     top += parseInt(match[2], 10);
                     left += parseInt(match[1], 10);
                 } else if (match = style.match(/matrix3d\(([\-\d,\s]+)\)/)) {
@@ -44,12 +45,26 @@ wax.u = {
             }
         };
 
-        calculateOffset(el);
+        // from jquery, offset.js
+        if ( typeof el.getBoundingClientRect !== "undefined" ) {
+          var body = document.body;
+          var doc = el.ownerDocument.documentElement;
+          var clientTop  = document.clientTop  || body.clientTop  || 0;
+          var clientLeft = document.clientLeft || body.clientLeft || 0;
+          var scrollTop  = window.pageYOffset || doc.scrollTop;
+          var scrollLeft = window.pageXOffset || doc.scrollLeft;
 
-        try {
-            while (el = el.offsetParent) { calculateOffset(el); }
-        } catch(e) {
-            // Hello, internet explorer.
+          var box = el.getBoundingClientRect();
+          top = box.top + scrollTop  - clientTop;
+          left = box.left + scrollLeft - clientLeft;
+
+        } else {
+          calculateOffset(el);
+          try {
+              while (el = el.offsetParent) { calculateOffset(el); }
+          } catch(e) {
+              // Hello, internet explorer.
+          }
         }
 
         // Offsets from the body
@@ -85,16 +100,6 @@ wax.u = {
             x;
     },
 
-    // IE doesn't have indexOf
-    indexOf: function(array, item) {
-        var nativeIndexOf = Array.prototype.indexOf;
-        if (array === null) return -1;
-        var i, l;
-        if (nativeIndexOf && array.indexOf === nativeIndexOf) return array.indexOf(item);
-        for (i = 0, l = array.length; i < l; i++) if (array[i] === item) return i;
-        return -1;
-    },
-
     // From quirksmode: normalize the offset of an event from the top-left
     // of the page.
     eventoffset: function(e) {
@@ -109,15 +114,9 @@ wax.u = {
             };
         } else if (e.clientX || e.clientY) {
             // Internet Explorer
-            var doc = document.documentElement, body = document.body;
-            var htmlComputed = document.body.parentNode.currentStyle;
-            var topMargin = parseInt(htmlComputed.marginTop, 10) || 0;
-            var leftMargin = parseInt(htmlComputed.marginLeft, 10) || 0;
             return {
-                x: e.clientX + (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
-                    (doc && doc.clientLeft || body && body.clientLeft || 0) + leftMargin,
-                y: e.clientY + (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
-                    (doc && doc.clientTop  || body && body.clientTop  || 0) + topMargin
+                x: e.clientX,
+                y: e.clientY
             };
         } else if (e.touches && e.touches.length === 1) {
             // Touch browsers
@@ -147,5 +146,24 @@ wax.u = {
     // during a given window of time.
     throttle: function(func, wait) {
         return this.limit(func, wait, false);
+    },
+
+    sanitize: function(content) {
+        if (!content) return '';
+
+        function urlX(url) {
+            // Data URIs are subject to a bug in Firefox
+            // https://bugzilla.mozilla.org/show_bug.cgi?id=255107
+            // which let them be a vector. But WebKit does 'the right thing'
+            // or at least 'something' about this situation, so we'll tolerate
+            // them.
+            if (/^(https?:\/\/|data:image)/.test(url)) {
+                return url;
+            }
+        }
+
+        function idX(id) { return id; }
+
+        return html_sanitize(content, urlX, idX);
     }
 };

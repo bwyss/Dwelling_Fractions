@@ -8,9 +8,7 @@ describe('attribution', function() {
         map = new MM.Map(div, new MM.TemplatedMapProvider(
             'http://{S}tile.openstreetmap.org/{Z}/{X}/{Y}.png', ['a.']), new MM.Point(600, 600));
         map.setCenterZoom(new MM.Location(37.811530, -122.2666097), 10);
-        attribution = wax.mm.attribution(map, {
-            attribution: '42'
-        }).appendTo(map.parent);
+        attribution = wax.mm.attribution().map(map).content('42').appendTo(map.parent);
     });
 
     afterEach(function() {
@@ -19,11 +17,11 @@ describe('attribution', function() {
     });
 
     it('can have its content set', function() {
-        expect($('.wax-attribution', map.parent).text()).toEqual('42');
+        expect($('.map-attribution', map.parent).text()).toEqual('42');
     });
 
     it('returns its element', function() {
-        expect(attribution.element()).toEqual($('.wax-attribution', map.parent)[0]);
+        expect(attribution.element()).toEqual($('.map-attribution', map.parent)[0]);
     });
 
     it('can be appended to an element', function() {

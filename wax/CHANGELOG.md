@@ -1,5 +1,35 @@
 ## Changelog
 
+## UNRELEASED 7.0.0
+
+* Removes the `wax.mm.latlngtooltip()`
+* Renames styles from `.wax-` as their prefix to `.map-`
+* Fixes IE issues in events, event interaction with Leaflet
+* Fix global variable leak of `coord` in wax.mm._provider
+* Fix fullscreen control problems with relative sizes
+* `wax.mm.pointselector` no longer takes a tilejson argument
+* `wax.mm.boxselector` no longer takes a tilejson argument
+* pointselector and boxselector can have multiple callbacks - they
+  now use a callbackManager and support `addCallback` and `removeCallback`
+* `wax.mm.boxselector` and `wax.mm.pointselector` no longer call `.add()` automatically
+* `wax.mm.zoomer` no longer calls `.add` automatically
+* `wax.mm.zoomer` supports easing
+* `wax.mm.legend` now permits access to its element with .element
+* Style updates
+* Add api for checking if map is fullscreen
+* Fix touch interaction
+
+## 6.4.2
+
+* Binds `wax.mm.zoomer()` controls to `touchstart` events to make
+  them more responsive on mobile devices.
+
+## 6.4.1
+
+* The `wax.gridmanager()` code now sets the `gridUrl` getter
+  to a functor for `null` when the `grids` argument is not present
+  in the TileJSON chunk.
+
 ## 6.4.0
 
 * Improve the style of zoom controls, matching that of MapBox
