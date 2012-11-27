@@ -35,7 +35,7 @@
 
     wax.tilejson('http://a.tiles.mapbox.com/v3/bwyss.map-45tf06mr.jsonp', function(tilejson) {
 
-    var map = new L.Map('intro-map', {maxZoom: 6})
+    var map = new L.Map('intro-map', {minZoom: 2, maxZoom: 6})
         .addLayer(new wax.leaf.connector(tilejson))
         .setView(new L.LatLng(20, 20), 3);
 
