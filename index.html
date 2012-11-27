@@ -33,11 +33,17 @@
         <div id='intro-map' class='map-demo'></div>
         <script type="text/javascript"> 
 
-    wax.tilejson('http://a.tiles.mapbox.com/v3/bwyss.map-45tf06mr.jsonp', function(tilejson) {
+    wax.tilejson('http://a.tiles.mapbox.com/v3/bwyss.map-2o6fg45e.jsonp', function(tilejson) {
 
     var map = new L.Map('intro-map', {minZoom: 2, maxZoom: 6})
         .addLayer(new wax.leaf.connector(tilejson))
         .setView(new L.LatLng(20, 20), 3);
+
+    osmStreets = new L.TileLayer('http://{s}.tiles.mapbox.com/v3/bwyss.map-kfj5gmfd/{z}/{x}/{y}.png');
+    naturalEarth = new L.TileLayer('http://{s}.tiles.mapbox.com/v3/mapbox.natural-earth-2/{z}/{x}/{y}.png');
+
+    map.addLayer(naturalEarth);
+    map.addLayer(osmStreets);
 
     wax.leaf.legend(map, tilejson).appendTo(map._container);
 
